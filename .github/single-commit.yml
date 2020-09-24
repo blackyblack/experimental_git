@@ -1,0 +1,26 @@
+name: Create single commit
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      INITIAL_COMMIT: 58dc14c148f481a6ad48119825f1f0e78339e17b
+    steps:
+      - uses: actions/checkout@v1
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git reset --soft ${INITIAL_COMMIT}
+          git commit -m "Auto squash commits from master since ${INITIAL_COMMIT}" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: refs/heads/branch2
+          force: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
