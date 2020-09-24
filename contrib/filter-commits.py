@@ -6,13 +6,21 @@ initialCommit = "HEAD~"
 if "INITIAL_COMMIT" in os.environ:
     initialCommit = os.environ["INITIAL_COMMIT"]
 
+filterPaths = [
+    "test_dir",
+    "contrib/filter-commits.py",
+    ".gitignore"
+]
+
 subprocess.run(["git", "reset", "--soft", initialCommit])
 subprocess.run(["git", "add", "--all", "."])
-subprocess.run(["git", "rm", "--cached", "-r", "test_dir"])
-subprocess.run(["git", "rm", "--cached", "./contrib/filter_commits.py"])
-subprocess.run(["git", "rm", "--cached", ".gitignore"])
+
+for p in filterPaths:
+    subprocess.run(["git", "rm", "--cached", "-r", p])
+
 subprocess.run(["git", "commit", "-m", "Auto squash commits from master since " + initialCommit])
-subprocess.run(["git", "add", "test_dir"])
-subprocess.run(["git", "add", "./contrib/filter_commits.py"])
-subprocess.run(["git", "add", ".gitignore"])
+
+for p in filterPaths:
+    subprocess.run(["git", "add", p])
+
 subprocess.run(["git", "commit", "-m", "Auxiliary changes"])
